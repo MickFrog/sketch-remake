@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import "./SketchBoard.css";
 import uniqid from "uniqid";
 
@@ -7,14 +7,16 @@ import uniqid from "uniqid";
 const boardMaxDimension = 632; // in pixels
 
 const SketchBoard = () => {
-  const boardRows: Array<JSX.Element> = [];
-  const [dimension, setDimension] = useState(32);
+  const [dimension, setDimension] = useState(boardMaxDimension / 32);
 
-  useEffect(() => {
-    for (let i = 0; i < dimension; i++) {
-      boardRows.push(<SketchRow rowNum={dimension} />);
+  const boardRows: Array<JSX.Element> = useMemo(() => {
+    const newBoardRows: Array<JSX.Element> = [];
+    for (let i = 0; i < 32; i++) {
+      newBoardRows.push(<SketchRow key={uniqid()} rowNum={32} />);
     }
-  }, [boardRows, dimension]);
+
+    return newBoardRows;
+  }, [dimension]);
 
   return (
     <main className="boardContainer">

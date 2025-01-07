@@ -8,7 +8,7 @@
 }
 
 .board {
-    padding: 0;
+    padding: 0.5rem;
     margin: 0;
 
     width: min(632px, 80%);
@@ -16,9 +16,14 @@
 }
 
 .sketchBox {
+    box-sizing: border-box;
     width: 32px;
     height: 32px;
-    border: 1px solid green;
+    border: 1px solid #6E7E85;
+}
+
+.sketchBox:hover {
+    background-color: rgba(0, 255, 0, 0.2);
 }
 
 .sketchRow {
