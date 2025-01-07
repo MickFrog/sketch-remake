@@ -7,23 +7,29 @@ import uniqid from "uniqid";
 const boardMaxDimension = 632; // in pixels
 
 const SketchBoard = () => {
-  const [dimension, setDimension] = useState(boardMaxDimension / 32);
+  const [dimension, setDimension] = useState(32);
 
   const boardRows: Array<JSX.Element> = useMemo(() => {
     const newBoardRows: Array<JSX.Element> = [];
-    for (let i = 0; i < 32; i++) {
-      newBoardRows.push(<SketchRow key={uniqid()} rowNum={32} />);
+    for (let i = 0; i < dimension; i++) {
+      newBoardRows.push(
+        <SketchRow key={uniqid()} rowNum={dimension} rowDimension={dimension} />
+      );
     }
 
     return newBoardRows;
   }, [dimension]);
 
+  const handleDimensionChange = (num: number): void => {
+    setDimension(num);
+  };
+
   return (
     <main className="boardContainer">
       <div className="controls">
-        <button>32*32</button>
-        <button>64*64</button>
-        <button>128*128</button>
+        <button onClick={() => handleDimensionChange(24)}>24*24</button>
+        <button onClick={() => handleDimensionChange(32)}>32*32</button>
+        <button onClick={() => handleDimensionChange(64)}>64*64</button>
       </div>
 
       <div className="board">{boardRows}</div>
@@ -43,13 +49,16 @@ const SketchBox = ({ size }: SketchBoxProps) => {
 
 type SketchRowProps = {
   rowNum: number;
+  rowDimension: number;
 };
 
-const SketchRow = ({ rowNum }: SketchRowProps) => {
+const SketchRow = ({ rowNum, rowDimension }: SketchRowProps) => {
   const rowBoxes: Array<JSX.Element> = [];
 
   for (let i = 0; i < rowNum; i++) {
-    rowBoxes.push(<SketchBox key={uniqid()} size={boardMaxDimension / 32} />);
+    rowBoxes.push(
+      <SketchBox key={uniqid()} size={boardMaxDimension / rowDimension} />
+    );
   }
 
   return <div className="sketchRow">{rowBoxes}</div>;
