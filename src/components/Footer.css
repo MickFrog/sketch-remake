@@ -1,0 +1,18 @@
+.sketchFooter {
+    font-size: 1.2rem;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    padding: 1.1rem;
+
+    border-top: 1px dotted green;
+}
+
+.sketchFooter > h3 {
+    cursor: pointer;
+}
+
+.sketchFooter > h3:hover{
+    color: lightgreen;
+}
