@@ -30,3 +30,8 @@
     display: flex;
     flex-flow: row nowrap;
 }
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+}

@@ -20,7 +20,11 @@ const SketchBoard = () => {
 
   return (
     <main className="boardContainer">
-      <div className="controls">Controls will be here</div>
+      <div className="controls">
+        <button>32*32</button>
+        <button>64*64</button>
+        <button>128*128</button>
+      </div>
 
       <div className="board">{boardRows}</div>
     </main>
