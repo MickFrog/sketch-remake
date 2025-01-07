@@ -3,4 +3,25 @@
     flex-flow: column nowrap;
     flex: 1 1 auto;
     flex-shrink: 0;
+
+    align-items: center;
+}
+
+.board {
+    padding: 0;
+    margin: 0;
+
+    width: min(632px, 80%);
+    height: 632px;
+}
+
+.sketchBox {
+    width: 32px;
+    height: 32px;
+    border: 1px solid green;
+}
+
+.sketchRow {
+    display: flex;
+    flex-flow: row nowrap;
 }
