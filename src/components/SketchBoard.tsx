@@ -5,11 +5,17 @@ import uniqid from "uniqid";
 // Board dimensions are 632*632
 const boardMaxDimension = 632; // in pixels
 
-type ShadingMode = -1 | 1; // 1 is shading, -1 is erasing mode
+type ShadingMode = -1 | 1 | 2; // 1 is shading, -1 is erasing mode
 
 type bgColorRefType = {
   color: string;
   currentMode: ShadingMode;
+};
+
+const getRandomColor = (): string => {
+  //generate hex color code
+  const randColor = Math.floor(Math.random() * 16777215).toString(16); //16777215 is the max color combinations. To base 16 string as default color codes.
+  return "#" + randColor;
 };
 
 const SketchBoard = () => {
@@ -21,6 +27,7 @@ const SketchBoard = () => {
   // color mode btns
   const colorModeBtn = useRef<HTMLButtonElement>(null);
   const eraseModeBtn = useRef<HTMLButtonElement>(null);
+  const randomModeBtn = useRef<HTMLButtonElement>(null);
 
   const boardRows: Array<JSX.Element> = useMemo(() => {
     const newBoardRows: Array<JSX.Element> = [];
@@ -52,15 +59,21 @@ const SketchBoard = () => {
     bgColor.current.color = event.currentTarget.value;
   };
 
-  const handleModeChange = (newMode: 1 | -1) => {
+  const handleModeChange = (newMode: ShadingMode) => {
     bgColor.current.currentMode = newMode;
 
     if (colorModeBtn !== null && newMode === 1) {
       colorModeBtn.current!.style.backgroundColor = "#A63D40";
       eraseModeBtn.current!.style.backgroundColor = "#A2999E";
-    } else {
+      randomModeBtn.current!.style.backgroundColor = "#A2999E";
+    } else if (colorModeBtn !== null && newMode === -1) {
       eraseModeBtn.current!.style.backgroundColor = "#A63D40";
       colorModeBtn.current!.style.backgroundColor = "#A2999E";
+      randomModeBtn.current!.style.backgroundColor = "#A2999E";
+    } else {
+      randomModeBtn.current!.style.backgroundColor = "#A63D40";
+      colorModeBtn.current!.style.backgroundColor = "#A2999E";
+      eraseModeBtn.current!.style.backgroundColor = "#A2999E";
     }
   };
 
@@ -79,6 +92,9 @@ const SketchBoard = () => {
 
         <button ref={colorModeBtn} onClick={() => handleModeChange(1)}>
           Color mode
+        </button>
+        <button ref={randomModeBtn} onClick={() => handleModeChange(2)}>
+          Random mode
         </button>
         <button ref={eraseModeBtn} onClick={() => handleModeChange(-1)}>
           Erase
@@ -101,10 +117,13 @@ type SketchBoxProps = {
 
 const SketchBox = ({ size, bgColorRef }: SketchBoxProps) => {
   const changeBgColor = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.target.style.backgroundColor =
-      bgColorRef.current?.currentMode === 1
-        ? bgColorRef.current?.color
-        : "transparent";
+    if (bgColorRef.current?.currentMode === 1) {
+      event.target.style.backgroundColor = bgColorRef.current?.color;
+    } else if (bgColorRef.current?.currentMode === -1) {
+      event.target.style.backgroundColor = "transparent";
+    } else {
+      event.target.style.backgroundColor = getRandomColor();
+    }
   };
 
   const handleColorChange = (event: React.MouseEvent<HTMLDivElement>) => {
