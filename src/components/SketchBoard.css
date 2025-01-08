@@ -38,10 +38,16 @@
 }
 
 .controls {
+    padding-top: 1rem;
     display: flex;
     justify-content: space-between;
 }
 
 .clickedBox {
     background-color: white;
+}
+
+.colorInput {
+    width: 5rem;
+    height: 50px;
 }

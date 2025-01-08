@@ -9,22 +9,23 @@ const boardMaxDimension = 632; // in pixels
 const SketchBoard = () => {
   const [dimension, setDimension] = useState(32);
   const [erase, setErase] = useState(0);
+  const [bgColor, setBgColor] = useState("#ffffff");
 
-  const constructBoard = (dimension: number) => {
+  const boardRows: Array<JSX.Element> = useMemo(() => {
     const newBoardRows: Array<JSX.Element> = [];
     for (let i = 0; i < dimension; i++) {
       newBoardRows.push(
-        <SketchRow key={uniqid()} rowNum={dimension} rowDimension={dimension} />
+        <SketchRow
+          key={uniqid()}
+          rowNum={dimension}
+          rowDimension={dimension}
+          bgColor={bgColor}
+        />
       );
     }
 
     return newBoardRows;
-  };
-
-  const boardRows: Array<JSX.Element> = useMemo(() => {
-    return constructBoard(dimension);
-
-    // chnaging erase will trigger reconstruction of the board
+    // changing erase will trigger reconstruction of the board
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dimension, erase]);
 
@@ -36,9 +37,23 @@ const SketchBoard = () => {
     setErase(erase === 0 ? 1 : 0);
   };
 
+  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBgColor(event.currentTarget.value);
+  };
+
   return (
     <main className="boardContainer">
       <div className="controls">
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <label htmlFor="colorInput">Color:</label>
+          <input
+            id="colorInput"
+            className="colorInput"
+            onChange={handleColorChange}
+            type="color"
+          />
+        </div>
+
         <button onClick={() => handleDimensionChange(24)}>24*24</button>
         <button onClick={() => handleDimensionChange(32)}>32*32</button>
         <button onClick={() => handleDimensionChange(64)}>64*64</button>
@@ -52,15 +67,17 @@ const SketchBoard = () => {
 
 type SketchBoxProps = {
   size: number; //dimensions of board square (size*size)
+  bgColor: string;
 };
 
-const SketchBox = ({ size }: SketchBoxProps) => {
+const SketchBox = ({ size, bgColor }: SketchBoxProps) => {
   const boxSize = { width: `${size}px`, height: `${size}px` };
+  console.log(bgColor);
 
   const handleColorChange = (event: React.MouseEvent<HTMLDivElement>) => {
     // if left mouse btn is clicked
     if (event.buttons === 1) {
-      event.currentTarget.classList.add("clickedBox");
+      console.log(bgColor);
     }
   };
 
@@ -76,14 +93,19 @@ const SketchBox = ({ size }: SketchBoxProps) => {
 type SketchRowProps = {
   rowNum: number;
   rowDimension: number;
+  bgColor: string;
 };
 
-const SketchRow = ({ rowNum, rowDimension }: SketchRowProps) => {
+const SketchRow = ({ rowNum, rowDimension, bgColor }: SketchRowProps) => {
   const rowBoxes: Array<JSX.Element> = [];
 
   for (let i = 0; i < rowNum; i++) {
     rowBoxes.push(
-      <SketchBox key={uniqid()} size={boardMaxDimension / rowDimension} />
+      <SketchBox
+        key={uniqid()}
+        size={boardMaxDimension / rowDimension}
+        bgColor={bgColor}
+      />
     );
   }
 
