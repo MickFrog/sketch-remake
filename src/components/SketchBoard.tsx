@@ -25,6 +25,7 @@ const SketchBoard = () => {
     return constructBoard(dimension);
 
     // chnaging erase will trigger reconstruction of the board
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dimension, erase]);
 
   const handleDimensionChange = (num: number): void => {
