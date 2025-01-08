@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import "./SketchBoard.css";
 import uniqid from "uniqid";
 
@@ -8,8 +8,8 @@ const boardMaxDimension = 632; // in pixels
 
 const SketchBoard = () => {
   const [dimension, setDimension] = useState(32);
-  const [erase, setErase] = useState(0);
-  const [bgColor, setBgColor] = useState("#ffffff");
+  const [clear, setClear] = useState(0);
+  const bgColor = useRef("#ffffff");
 
   const boardRows: Array<JSX.Element> = useMemo(() => {
     const newBoardRows: Array<JSX.Element> = [];
@@ -19,26 +19,26 @@ const SketchBoard = () => {
           key={uniqid()}
           rowNum={dimension}
           rowDimension={dimension}
-          bgColor={bgColor}
+          bgColorRef={bgColor}
         />
       );
     }
 
     return newBoardRows;
-    // changing erase will trigger reconstruction of the board
+    // changing clear will trigger reconstruction of the board
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dimension, erase]);
+  }, [dimension, clear]);
 
   const handleDimensionChange = (num: number): void => {
     setDimension(num);
   };
 
-  const eraseBoard = () => {
-    setErase(erase === 0 ? 1 : 0);
+  const clearBoard = () => {
+    setClear(clear === 0 ? 1 : 0);
   };
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBgColor(event.currentTarget.value);
+    bgColor.current = event.currentTarget.value;
   };
 
   return (
@@ -57,7 +57,7 @@ const SketchBoard = () => {
         <button onClick={() => handleDimensionChange(24)}>24*24</button>
         <button onClick={() => handleDimensionChange(32)}>32*32</button>
         <button onClick={() => handleDimensionChange(64)}>64*64</button>
-        <button onClick={eraseBoard}>Erase</button>
+        <button onClick={clearBoard}>Clear</button>
       </div>
 
       <div className="board">{boardRows}</div>
@@ -67,24 +67,26 @@ const SketchBoard = () => {
 
 type SketchBoxProps = {
   size: number; //dimensions of board square (size*size)
-  bgColor: string;
+  bgColorRef: React.RefObject<string>;
 };
 
-const SketchBox = ({ size, bgColor }: SketchBoxProps) => {
-  const boxSize = { width: `${size}px`, height: `${size}px` };
-  console.log(bgColor);
-
+const SketchBox = ({ size, bgColorRef }: SketchBoxProps) => {
   const handleColorChange = (event: React.MouseEvent<HTMLDivElement>) => {
     // if left mouse btn is clicked
     if (event.buttons === 1) {
-      console.log(bgColor);
+      event.target.style.backgroundColor = bgColorRef.current;
     }
+  };
+
+  const handleClickColorChange = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.target.style.backgroundColor = bgColorRef.current;
   };
 
   return (
     <div
       className="sketchBox"
-      style={boxSize}
+      style={{ width: `${size}px`, height: `${size}px` }}
+      onClick={handleClickColorChange}
       onMouseEnter={handleColorChange}
     ></div>
   );
@@ -93,10 +95,10 @@ const SketchBox = ({ size, bgColor }: SketchBoxProps) => {
 type SketchRowProps = {
   rowNum: number;
   rowDimension: number;
-  bgColor: string;
+  bgColorRef: React.RefObject<string>;
 };
 
-const SketchRow = ({ rowNum, rowDimension, bgColor }: SketchRowProps) => {
+const SketchRow = ({ rowNum, rowDimension, bgColorRef }: SketchRowProps) => {
   const rowBoxes: Array<JSX.Element> = [];
 
   for (let i = 0; i < rowNum; i++) {
@@ -104,7 +106,7 @@ const SketchRow = ({ rowNum, rowDimension, bgColor }: SketchRowProps) => {
       <SketchBox
         key={uniqid()}
         size={boardMaxDimension / rowDimension}
-        bgColor={bgColor}
+        bgColorRef={bgColorRef}
       />
     );
   }
