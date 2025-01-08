@@ -3,13 +3,24 @@ import "./SketchBoard.css";
 import uniqid from "uniqid";
 
 // Board dimensions are 632*632
-
 const boardMaxDimension = 632; // in pixels
+
+type ShadingMode = -1 | 1; // 1 is shading, -1 is erasing mode
+
+type bgColorRefType = {
+  color: string;
+  currentMode: ShadingMode;
+};
 
 const SketchBoard = () => {
   const [dimension, setDimension] = useState(32);
   const [clear, setClear] = useState(0);
-  const bgColor = useRef("#ffffff");
+
+  const bgColor = useRef<bgColorRefType>({ color: "#ffffff", currentMode: 1 });
+
+  // color mode btns
+  const colorModeBtn = useRef<HTMLButtonElement>(null);
+  const eraseModeBtn = useRef<HTMLButtonElement>(null);
 
   const boardRows: Array<JSX.Element> = useMemo(() => {
     const newBoardRows: Array<JSX.Element> = [];
@@ -38,7 +49,19 @@ const SketchBoard = () => {
   };
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    bgColor.current = event.currentTarget.value;
+    bgColor.current.color = event.currentTarget.value;
+  };
+
+  const handleModeChange = (newMode: 1 | -1) => {
+    bgColor.current.currentMode = newMode;
+
+    if (colorModeBtn !== null && newMode === 1) {
+      colorModeBtn.current!.style.backgroundColor = "#A63D40";
+      eraseModeBtn.current!.style.backgroundColor = "#A2999E";
+    } else {
+      eraseModeBtn.current!.style.backgroundColor = "#A63D40";
+      colorModeBtn.current!.style.backgroundColor = "#A2999E";
+    }
   };
 
   return (
@@ -54,6 +77,12 @@ const SketchBoard = () => {
           />
         </div>
 
+        <button ref={colorModeBtn} onClick={() => handleModeChange(1)}>
+          Color mode
+        </button>
+        <button ref={eraseModeBtn} onClick={() => handleModeChange(-1)}>
+          Erase
+        </button>
         <button onClick={() => handleDimensionChange(24)}>24*24</button>
         <button onClick={() => handleDimensionChange(32)}>32*32</button>
         <button onClick={() => handleDimensionChange(64)}>64*64</button>
@@ -67,26 +96,29 @@ const SketchBoard = () => {
 
 type SketchBoxProps = {
   size: number; //dimensions of board square (size*size)
-  bgColorRef: React.RefObject<string>;
+  bgColorRef: React.RefObject<bgColorRefType>;
 };
 
 const SketchBox = ({ size, bgColorRef }: SketchBoxProps) => {
+  const changeBgColor = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.target.style.backgroundColor =
+      bgColorRef.current?.currentMode === 1
+        ? bgColorRef.current?.color
+        : "transparent";
+  };
+
   const handleColorChange = (event: React.MouseEvent<HTMLDivElement>) => {
     // if left mouse btn is clicked
     if (event.buttons === 1) {
-      event.target.style.backgroundColor = bgColorRef.current;
+      changeBgColor(event);
     }
-  };
-
-  const handleClickColorChange = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.target.style.backgroundColor = bgColorRef.current;
   };
 
   return (
     <div
       className="sketchBox"
       style={{ width: `${size}px`, height: `${size}px` }}
-      onClick={handleClickColorChange}
+      onClick={changeBgColor}
       onMouseEnter={handleColorChange}
     ></div>
   );
@@ -95,7 +127,7 @@ const SketchBox = ({ size, bgColorRef }: SketchBoxProps) => {
 type SketchRowProps = {
   rowNum: number;
   rowDimension: number;
-  bgColorRef: React.RefObject<string>;
+  bgColorRef: React.RefObject<bgColorRefType>;
 };
 
 const SketchRow = ({ rowNum, rowDimension, bgColorRef }: SketchRowProps) => {
