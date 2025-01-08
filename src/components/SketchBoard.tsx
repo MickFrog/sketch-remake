@@ -90,7 +90,11 @@ const SketchBoard = () => {
           />
         </div>
 
-        <button ref={colorModeBtn} onClick={() => handleModeChange(1)}>
+        <button
+          ref={colorModeBtn}
+          style={{ backgroundColor: "#A63D40" }}
+          onClick={() => handleModeChange(1)}
+        >
           Color mode
         </button>
         <button ref={randomModeBtn} onClick={() => handleModeChange(2)}>
