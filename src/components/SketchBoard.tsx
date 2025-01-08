@@ -8,8 +8,9 @@ const boardMaxDimension = 632; // in pixels
 
 const SketchBoard = () => {
   const [dimension, setDimension] = useState(32);
+  const [erase, setErase] = useState(0);
 
-  const boardRows: Array<JSX.Element> = useMemo(() => {
+  const constructBoard = (dimension: number) => {
     const newBoardRows: Array<JSX.Element> = [];
     for (let i = 0; i < dimension; i++) {
       newBoardRows.push(
@@ -18,10 +19,20 @@ const SketchBoard = () => {
     }
 
     return newBoardRows;
-  }, [dimension]);
+  };
+
+  const boardRows: Array<JSX.Element> = useMemo(() => {
+    return constructBoard(dimension);
+
+    // chnaging erase will trigger reconstruction of the board
+  }, [dimension, erase]);
 
   const handleDimensionChange = (num: number): void => {
     setDimension(num);
+  };
+
+  const eraseBoard = () => {
+    setErase(erase === 0 ? 1 : 0);
   };
 
   return (
@@ -30,6 +41,7 @@ const SketchBoard = () => {
         <button onClick={() => handleDimensionChange(24)}>24*24</button>
         <button onClick={() => handleDimensionChange(32)}>32*32</button>
         <button onClick={() => handleDimensionChange(64)}>64*64</button>
+        <button onClick={eraseBoard}>Erase</button>
       </div>
 
       <div className="board">{boardRows}</div>
