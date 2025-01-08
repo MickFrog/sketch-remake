@@ -118,11 +118,11 @@ type SketchBoxProps = {
 const SketchBox = ({ size, bgColorRef }: SketchBoxProps) => {
   const changeBgColor = (event: React.MouseEvent<HTMLDivElement>) => {
     if (bgColorRef.current?.currentMode === 1) {
-      event.target.style.backgroundColor = bgColorRef.current?.color;
+      event.currentTarget.style.backgroundColor = bgColorRef.current?.color;
     } else if (bgColorRef.current?.currentMode === -1) {
-      event.target.style.backgroundColor = "transparent";
+      event.currentTarget.style.backgroundColor = "transparent";
     } else {
-      event.target.style.backgroundColor = getRandomColor();
+      event.currentTarget.style.backgroundColor = getRandomColor();
     }
   };
 
