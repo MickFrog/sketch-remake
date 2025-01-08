@@ -35,3 +35,7 @@
     display: flex;
     justify-content: space-between;
 }
+
+.clickedBox {
+    background-color: white;
+}

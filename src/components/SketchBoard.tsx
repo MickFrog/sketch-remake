@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import "./SketchBoard.css";
 import uniqid from "uniqid";
 
@@ -44,7 +44,20 @@ type SketchBoxProps = {
 const SketchBox = ({ size }: SketchBoxProps) => {
   const boxSize = { width: `${size}px`, height: `${size}px` };
 
-  return <div className="sketchBox" style={boxSize}></div>;
+  const handleColorChange = (event: React.MouseEvent<HTMLDivElement>) => {
+    // if left mouse btn is clicked
+    if (event.buttons === 1) {
+      event.currentTarget.classList.add("clickedBox");
+    }
+  };
+
+  return (
+    <div
+      className="sketchBox"
+      style={boxSize}
+      onMouseEnter={handleColorChange}
+    ></div>
+  );
 };
 
 type SketchRowProps = {
